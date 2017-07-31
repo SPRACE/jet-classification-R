@@ -9,8 +9,16 @@ print(as.matrix(signal_data[1:10,625]))
 # Printing the Heatmap
 mean_signal <- colMeans(signal_data)
 dim(mean_signal) <- c(25,25)
-colfunc <- colorRampPalette(c("#FCEFD0", "#751503"))
-image(mean_signal, col=colfunc(10))
+library(ggplot2)  
+library(RColorBrewer)  
+library(reshape2)
+mean_signal.melted <- melt(mean_signal)
+colnames(mean_signal.melted) <- c("X", "Y","Value")
+hm.palette <- colorRampPalette(c("#f7fbff", "#08306b"))
+ggplot(mean_signal.melted, aes(x = X, y = Y, fill = Value)) +  
+  geom_tile() +
+  coord_equal() +
+  scale_fill_gradientn(colours = hm.palette(100))
 
 # Adding "1" after every result, classifing them as a signal
 signal_data[,626] <- 1
@@ -22,7 +30,12 @@ print(dim(background_data))
 
 mean_background <- colMeans(background_data)
 dim(mean_background) <-c(25, 25)
-image(mean_background, col=colfunc(10))
+mean_background.melted <- melt(mean_background)
+colnames(mean_background.melted) <- c("X", "Y","Value")
+ggplot(mean_background.melted, aes(x = X, y = Y, fill = Value)) +  
+  geom_tile() +
+  coord_equal() +
+  scale_fill_gradientn(colours = hm.palette(100))
 
 background_data[,626] <- 0
 print(as.matrix(background_data[1:10,626]))
